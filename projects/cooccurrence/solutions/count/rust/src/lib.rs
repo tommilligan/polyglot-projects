@@ -4,12 +4,14 @@ fn cartesian<'a>(tokens: &Vec<&'a str>) -> Vec<Vec<&'a str>> {
     let mut pairs = Vec::new();
     for (i, prim) in tokens.iter().enumerate() {
         for sec in tokens[i + 1..].iter() {
+            // Implicitly copy &str
             pairs.push(vec![*prim, *sec])
         }
     }
     pairs
 }
 
+/// Given a vector of string slices, generates a sorted key for id
 fn key_from(mut tokens: Vec<&str>) -> String {
     tokens.sort();
     tokens.join("/")
@@ -40,7 +42,13 @@ impl Cooccurrence {
 
 #[cfg(test)]
 mod tests {
-    use super::Cooccurrence;
+    use super::{key_from, Cooccurrence};
+
+    #[test]
+    fn test_key_from_sorting() {
+        assert_eq!(key_from(vec!["foo", "bar"]), key_from(vec!["bar", "foo"]))
+    }
+
     #[test]
     fn simple_case() {
         let cooc = Cooccurrence::from(vec![
