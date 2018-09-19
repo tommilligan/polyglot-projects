@@ -1,16 +1,16 @@
 use std::collections::HashMap;
 
-fn cartesian(tokens: &Vec<&str>) -> Vec<Vec<String>> {
+fn cartesian<'a>(tokens: &Vec<&'a str>) -> Vec<Vec<&'a str>> {
     let mut pairs = Vec::new();
     for (i, prim) in tokens.iter().enumerate() {
         for sec in tokens[i + 1..].iter() {
-            pairs.push(vec![prim.to_string(), sec.to_string()])
+            pairs.push(vec![*prim, *sec])
         }
     }
     pairs
 }
 
-fn key_from(mut tokens: Vec<String>) -> String {
+fn key_from(mut tokens: Vec<&str>) -> String {
     tokens.sort();
     tokens.join("/")
 }
@@ -34,9 +34,7 @@ impl Cooccurrence {
     }
 
     pub fn get(&self, a: &str, b: &str) -> u64 {
-        *self.lookup
-            .get(&key_from(vec![a.to_string(), b.to_string()]))
-            .unwrap_or(&0)
+        *self.lookup.get(&key_from(vec![a, b])).unwrap_or(&0)
     }
 }
 
