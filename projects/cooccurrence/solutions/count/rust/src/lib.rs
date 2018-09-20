@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+/// Given a vector of string refs, return a vector of vector pairs of string refs
 fn cartesian<'a>(tokens: &Vec<&'a str>) -> Vec<Vec<&'a str>> {
     let mut pairs = Vec::new();
     for (i, prim) in tokens.iter().enumerate() {
@@ -17,11 +18,13 @@ fn key_from(mut tokens: Vec<&str>) -> String {
     tokens.join("/")
 }
 
+/// Process lines of data and hold token cooccurrence counts
 pub struct Cooccurrence {
     lookup: HashMap<String, u64>,
 }
 
 impl Cooccurrence {
+    /// Read in a set of lines and get cooccurrence data
     pub fn from(lines: Vec<String>) -> Cooccurrence {
         let mut lookup = HashMap::new();
         for line in lines.iter() {
@@ -35,6 +38,7 @@ impl Cooccurrence {
         Cooccurrence { lookup: lookup }
     }
 
+    /// Get cooccurrence counts for two tokens
     pub fn get(&self, a: &str, b: &str) -> u64 {
         *self.lookup.get(&key_from(vec![a, b])).unwrap_or(&0)
     }
@@ -42,11 +46,19 @@ impl Cooccurrence {
 
 #[cfg(test)]
 mod tests {
-    use super::{key_from, Cooccurrence};
+    use super::{cartesian, key_from, Cooccurrence};
 
     #[test]
     fn test_key_from_sorting() {
         assert_eq!(key_from(vec!["foo", "bar"]), key_from(vec!["bar", "foo"]))
+    }
+
+    #[test]
+    fn test_cartesian_pairs() {
+        assert_eq!(
+            cartesian(&vec!["foo", "bar", "spam"]),
+            vec![vec!["foo", "bar"], vec!["foo", "spam"], vec!["bar", "spam"]]
+        );
     }
 
     #[test]
